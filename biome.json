@@ -1,0 +1,22 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.7.1/schema.json",
+  "formatter": {
+    "indentStyle": "space",
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "linter": {
+    "rules": {
+      "a11y": {
+        "useAltText": "off"
+      }
+    }
+  },
+  "files": {
+    "ignore": ["node_modules/", ".wrangler/", "dist/"]
+  }
+}

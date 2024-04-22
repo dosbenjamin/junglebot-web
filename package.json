@@ -1,0 +1,12 @@
+{
+  "name": "junglebot",
+  "author": "Benjamin Dos Santos",
+  "private": true,
+  "scripts": {
+    "check:preview": "pnpm biome check .",
+    "check:apply": "pnpm biome check --apply ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.7.1"
+  }
+}
