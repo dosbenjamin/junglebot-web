@@ -8,7 +8,11 @@ export default defineConfig({
   plugins: [
     devServer({
       entry: path.join(process.cwd(), 'index.tsx'),
-      plugins: [cloudflare()],
+      plugins: [
+        cloudflare({
+          d1Databases: ['DATABASE'],
+        }),
+      ],
     }),
     pages({
       entry: 'index.tsx',

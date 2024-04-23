@@ -1,2 +1,7 @@
 name = "junglebot-web"
 pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DATABASE"
+database_name = "junglebot"
+database_id = "83595de5-7784-47df-92f2-e53376642ade"

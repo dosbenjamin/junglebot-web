@@ -10,6 +10,8 @@
     "deploy": "pnpm build && wrangler pages deploy"
   },
   "dependencies": {
+    "drizzle-orm": "^0.30.9",
+    "effect": "^3.0.3",
     "hono": "^4.2.6"
   },
   "devDependencies": {
