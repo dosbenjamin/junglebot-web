@@ -5,3 +5,7 @@ pages_build_output_dir = "dist"
 binding = "DATABASE"
 database_name = "junglebot"
 database_id = "83595de5-7784-47df-92f2-e53376642ade"
+
+[[r2_buckets]]
+binding = 'BUCKET'
+bucket_name = 'junglebot'

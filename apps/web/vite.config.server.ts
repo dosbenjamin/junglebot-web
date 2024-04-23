@@ -11,6 +11,7 @@ export default defineConfig({
       plugins: [
         cloudflare({
           d1Databases: ['DATABASE'],
+          r2Buckets: ['BUCKET'],
         }),
       ],
     }),
@@ -21,6 +22,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '#app': path.join(process.cwd(), 'app'),
+      '#common': path.join(process.cwd(), 'common'),
       '#helpers': path.join(process.cwd(), 'helpers'),
       '#providers': path.join(process.cwd(), 'providers'),
       '#static': path.join(process.cwd(), 'static'),
