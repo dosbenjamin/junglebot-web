@@ -2,7 +2,9 @@
   "name": "@junglebot/web",
   "type": "module",
   "scripts": {
-    "prepare": "panda codegen",
+    "generate:styled-system": "panda codegen",
+    "generate:migration": "drizzle-kit generate:sqlite",
+    "migrate": "wrangler d1 migrations list DATABASE --local",
     "dev": "vite dev --config vite.config.server.ts",
     "build:client": "vite build --config vite.config.client.ts",
     "build:server": "vite build --config vite.config.server.ts",
@@ -22,6 +24,7 @@
     "@hono/vite-cloudflare-pages": "^0.2.4",
     "@hono/vite-dev-server": "^0.11.0",
     "@pandacss/dev": "^0.38.0",
+    "drizzle-kit": "^0.20.17",
     "vite": "^5.0.12",
     "wrangler": "^3.47.0"
   }
