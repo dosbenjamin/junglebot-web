@@ -22,10 +22,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '#app': path.join(process.cwd(), 'app'),
-      '#common': path.join(process.cwd(), 'common'),
       '#helpers': path.join(process.cwd(), 'helpers'),
       '#providers': path.join(process.cwd(), 'providers'),
       '#static': path.join(process.cwd(), 'static'),
+      '#styled-system': path.join(process.cwd(), 'styled-system'),
       '#views': path.join(process.cwd(), 'views'),
     },
   },

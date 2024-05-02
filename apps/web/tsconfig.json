@@ -21,10 +21,10 @@
     "baseUrl": ".",
     "paths": {
       "#app/*": ["app/*"],
-      "#common/*": ["common/*"],
       "#helpers/*": ["helpers/*"],
       "#providers/*": ["providers/*"],
       "#static/*": ["static/*"],
+      "#styled-system/*": ["styled-system/*"],
       "#views/*": ["views/*"]
     }
   }
