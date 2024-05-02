@@ -1,1 +1,7 @@
+@import '@fontsource-variable/inconsolata';
+
 @layer reset, base, tokens, recipes, utilities;
+
+:root {
+  --font-inconsolata: 'Inconsolata Variable', monospace;
+}
