@@ -23,7 +23,7 @@ export const serveBucket = createHandlers(
   async (context) => {
     const { key } = context.req.valid('param');
 
-    const getBucketObject = pipe(
+    const getResponse = pipe(
       Effect.flatMap(Bucket, (bucket) => bucket.get(key)),
       Effect.map((object) => context.newResponse(object.body)),
       Effect.catchTags({
@@ -33,6 +33,6 @@ export const serveBucket = createHandlers(
       Effect.provide(context.var.BucketLive),
     );
 
-    return Effect.runPromise(getBucketObject);
+    return Effect.runPromise(getResponse);
   },
 );

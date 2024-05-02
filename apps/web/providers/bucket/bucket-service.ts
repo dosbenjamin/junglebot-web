@@ -1,9 +1,15 @@
-import { Context, Data, Effect, Layer } from 'effect';
+import { Schema } from '@effect/schema';
+import { Context, Data, Effect, Layer, Option } from 'effect';
 import { bucketConfig } from '#providers/bucket/bucket-config';
-import { BucketObject, BucketObjectKey } from '#providers/bucket/bucket-schemas';
+import { BucketObjectKey } from '#providers/bucket/bucket-schemas';
 
 class BucketExternalError extends Data.TaggedError('BucketExternalError') {}
 class BucketObjectNotFoundError extends Data.TaggedError('BucketObjectNotFoundError') {}
+
+class BucketObject extends Schema.Class<BucketObject>('BucketObject')({
+  key: BucketObjectKey,
+  body: Schema.instanceOf(ReadableStream),
+}) {}
 
 export class Bucket extends Context.Tag('Bucket')<
   Bucket,
@@ -12,7 +18,7 @@ export class Bucket extends Context.Tag('Bucket')<
     readonly get: (
       key: BucketObjectKey,
     ) => Effect.Effect<BucketObject, BucketExternalError | BucketObjectNotFoundError>;
-    readonly getObjectUrl: (key: BucketObjectKey) => Effect.Effect<string>;
+    readonly getUrl: (key: BucketObjectKey) => Effect.Effect<string>;
     readonly delete: (key: BucketObjectKey) => Effect.Effect<void, BucketExternalError>;
   }
 >() {
@@ -32,21 +38,22 @@ export class Bucket extends Context.Tag('Bucket')<
       },
 
       get(key: BucketObjectKey) {
-        return Effect.gen(function* (_) {
-          const objectBody = yield* Effect.tryPromise({
+        return Effect.gen(function* () {
+          const object = yield* Effect.tryPromise({
             try: () => bucket.get(key),
             catch: () => new BucketExternalError(),
           });
 
-          if (objectBody) {
-            return new BucketObject({ key, body: objectBody.body });
-          }
+          const { body } = yield* Option.match(Option.fromNullable(object), {
+            onSome: (object) => Effect.succeed(object),
+            onNone: () => new BucketObjectNotFoundError(),
+          });
 
-          return yield* new BucketObjectNotFoundError();
+          return new BucketObject({ key, body });
         });
       },
 
-      getObjectUrl(key: BucketObjectKey) {
+      getUrl(key: BucketObjectKey) {
         const url = new URL(import.meta.url, bucketConfig.rewrite(key));
 
         return Effect.succeed(url.toString());

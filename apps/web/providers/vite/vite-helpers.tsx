@@ -3,7 +3,7 @@ import type { FC } from 'hono/jsx';
 import { useRequestContext } from 'hono/jsx-renderer';
 import { Vite } from '#providers/vite/vite-service';
 
-export const useViteAssetPath = (path: string | undefined): string | undefined => {
+export const useViteAssetPath = (path: string | undefined): Promise<string | undefined> => {
   const context = useRequestContext();
 
   const getAssetPath = pipe(
@@ -12,26 +12,26 @@ export const useViteAssetPath = (path: string | undefined): string | undefined =
     Effect.provide(context.var.ViteLive),
   );
 
-  return Effect.runSync(getAssetPath);
+  return Effect.runPromise(getAssetPath);
 };
 
-export const Stylesheet: FC<Hono.LinkHTMLAttributes> = (props) => {
+export const Stylesheet: FC<Hono.LinkHTMLAttributes> = async (props) => {
   const { href, ...rest } = props;
-  const assetPath = useViteAssetPath(href);
+  const assetPath = await useViteAssetPath(href);
 
   return <link rel="stylesheet" type="text/css" href={assetPath} {...rest} />;
 };
 
-export const Script: FC<Hono.ScriptHTMLAttributes> = (props) => {
+export const Script: FC<Hono.ScriptHTMLAttributes> = async (props) => {
   const { src, ...rest } = props;
-  const assetPath = useViteAssetPath(src);
+  const assetPath = await useViteAssetPath(src);
 
   return <script src={assetPath} {...rest} />;
 };
 
-export const Image: FC<Hono.ImgHTMLAttributes> = (props) => {
+export const Image: FC<Hono.ImgHTMLAttributes> = async (props) => {
   const { src, ...rest } = props;
-  const assetPath = useViteAssetPath(src);
+  const assetPath = await useViteAssetPath(src);
 
   return <img src={assetPath} {...rest} />;
 };

@@ -15,7 +15,7 @@ export class Vite extends Context.Tag('Vite')<
     Effect.gen(function* () {
       const resolver = yield* Effect.serviceOption(ViteAssetPathResolver);
 
-      const getAssetPath = (
+      const get = (
         path: string | undefined,
       ): Effect.Effect<string | undefined, ViteAssetPathNotFoundError> => {
         if (!path) return new ViteAssetPathNotFoundError();
@@ -29,7 +29,7 @@ export class Vite extends Context.Tag('Vite')<
       const cache = yield* Cache.make({
         capacity: Number.MAX_SAFE_INTEGER,
         timeToLive: Number.POSITIVE_INFINITY,
-        lookup: getAssetPath,
+        lookup: get,
       });
 
       return {

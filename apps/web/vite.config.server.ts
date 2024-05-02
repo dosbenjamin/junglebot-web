@@ -1,23 +1,16 @@
 import path from 'node:path';
 import pages from '@hono/vite-cloudflare-pages';
 import devServer from '@hono/vite-dev-server';
-import cloudflare from '@hono/vite-dev-server/cloudflare-pages';
+import cloudflare from '@hono/vite-dev-server/cloudflare';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
     devServer({
       entry: path.join(process.cwd(), 'index.tsx'),
-      plugins: [
-        cloudflare({
-          d1Databases: ['DATABASE'],
-          r2Buckets: ['BUCKET'],
-        }),
-      ],
+      adapter: cloudflare,
     }),
-    pages({
-      entry: 'index.tsx',
-    }),
+    pages({ entry: 'index.tsx' }),
   ],
   resolve: {
     alias: {

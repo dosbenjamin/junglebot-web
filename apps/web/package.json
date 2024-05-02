@@ -2,9 +2,10 @@
   "name": "@junglebot/web",
   "type": "module",
   "scripts": {
-    "generate:styled-system": "panda codegen",
-    "generate:migration": "drizzle-kit generate:sqlite",
-    "migrate": "wrangler d1 migrations list DATABASE --local",
+    "prepare": "panda codegen",
+    "migrations:generate": "drizzle-kit generate:sqlite",
+    "migrations:list": "wrangler d1 migrations list junglebot",
+    "migrations:apply": "wrangler d1 migrations apply junglebot",
     "dev": "vite dev --config vite.config.server.ts",
     "build:client": "vite build --config vite.config.client.ts",
     "build:server": "vite build --config vite.config.server.ts",
@@ -13,19 +14,19 @@
     "deploy": "pnpm build && wrangler pages deploy"
   },
   "dependencies": {
-    "@effect/schema": "^0.66.6",
+    "@effect/schema": "^0.66.14",
     "@fontsource-variable/inconsolata": "^5.0.18",
-    "drizzle-orm": "^0.30.9",
-    "effect": "^3.0.7",
-    "hono": "^4.2.6"
+    "drizzle-orm": "^0.30.10",
+    "effect": "^3.1.2",
+    "hono": "^4.3.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240403.0",
-    "@hono/vite-cloudflare-pages": "^0.2.4",
-    "@hono/vite-dev-server": "^0.11.0",
+    "@cloudflare/workers-types": "^4.20240502.0",
+    "@hono/vite-cloudflare-pages": "^0.2.5",
+    "@hono/vite-dev-server": "^0.11.1",
     "@pandacss/dev": "^0.38.0",
     "drizzle-kit": "^0.20.17",
-    "vite": "^5.0.12",
-    "wrangler": "^3.47.0"
+    "vite": "^5.2.11",
+    "wrangler": "^3.53.1"
   }
 }

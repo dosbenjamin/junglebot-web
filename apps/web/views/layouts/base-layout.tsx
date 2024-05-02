@@ -1,8 +1,8 @@
-import type { FC } from 'hono/jsx';
+import type { FC, PropsWithChildren } from 'hono/jsx';
 import { Script, Stylesheet } from '#providers/vite/vite-helpers';
 import { css } from '#styled-system/css';
 
-export const Base: FC = () => (
+export const Base: FC<PropsWithChildren> = (props) => (
   <html lang="en">
     <head>
       <Stylesheet href="/static/css/index.css" />
@@ -39,6 +39,7 @@ export const Base: FC = () => (
         </header>
         <section class={css({ layerStyle: 'cell', gridRow: '2 / -1' })}>
           <h2 class={css({ textStyle: 'subtitle' })}>Derniers sons ajoutés</h2>
+          {props.children}
         </section>
         <section class={css({ layerStyle: 'cell', gridRow: '2 / -1' })}>
           <h2 class={css({ textStyle: 'subtitle' })}>Ajouter un son</h2>
