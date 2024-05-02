@@ -1,4 +1,4 @@
-import { sounds } from '#app/sounds/sounds-models';
+import { soundsTable } from '#app/sounds/sounds-models';
 
-export const schema = { sounds };
+export const schema = { soundsTable };
 export type DrizzleSchema = typeof schema;

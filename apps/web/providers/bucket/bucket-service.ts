@@ -1,4 +1,5 @@
 import { Context, Data, Effect, Layer } from 'effect';
+import { bucketConfig } from '#providers/bucket/bucket-config';
 import { BucketObject, BucketObjectKey } from '#providers/bucket/bucket-schemas';
 
 class BucketExternalError extends Data.TaggedError('BucketExternalError') {}
@@ -11,6 +12,7 @@ export class Bucket extends Context.Tag('Bucket')<
     readonly get: (
       key: BucketObjectKey,
     ) => Effect.Effect<BucketObject, BucketExternalError | BucketObjectNotFoundError>;
+    readonly getObjectUrl: (key: BucketObjectKey) => Effect.Effect<string>;
     readonly delete: (key: BucketObjectKey) => Effect.Effect<void, BucketExternalError>;
   }
 >() {
@@ -42,6 +44,12 @@ export class Bucket extends Context.Tag('Bucket')<
 
           return yield* new BucketObjectNotFoundError();
         });
+      },
+
+      getObjectUrl(key: BucketObjectKey) {
+        const url = new URL(import.meta.url, bucketConfig.rewrite(key));
+
+        return Effect.succeed(url.toString());
       },
 
       delete(key: BucketObjectKey) {
