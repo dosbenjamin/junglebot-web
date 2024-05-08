@@ -1,5 +1,5 @@
 import type { FC, PropsWithChildren } from 'hono/jsx';
-import { Script, Stylesheet } from '#providers/vite/vite-helpers';
+import { Script, Stylesheet } from '#providers/vite/helpers/vite-helpers';
 import { css } from '#styled-system/css';
 
 export const Base: FC<PropsWithChildren> = (props) => (

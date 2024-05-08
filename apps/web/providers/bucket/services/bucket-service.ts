@@ -1,7 +1,7 @@
 import { Schema } from '@effect/schema';
 import { Context, Data, Effect, Layer, Option } from 'effect';
 import { bucketConfig } from '#providers/bucket/bucket-config';
-import { BucketObjectKey } from '#providers/bucket/bucket-schemas';
+import { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
 
 class BucketExternalError extends Data.TaggedError('BucketExternalError') {}
 class BucketObjectNotFoundError extends Data.TaggedError('BucketObjectNotFoundError') {}

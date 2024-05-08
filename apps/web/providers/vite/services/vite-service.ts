@@ -1,6 +1,6 @@
 import { Cache, Context, Effect, Layer, Option } from 'effect';
-import { ViteAssetPathResolver } from '#providers/vite/vite-asset-path-resolver';
-import { ViteAssetPathNotFoundError } from '#providers/vite/vite-errors';
+import { ViteAssetPathNotFoundError } from '#providers/vite/errors/vite-errors';
+import { ViteAssetPathResolver } from '#providers/vite/services/vite-asset-path-resolver';
 
 export class Vite extends Context.Tag('Vite')<
   Vite,
@@ -29,7 +29,7 @@ export class Vite extends Context.Tag('Vite')<
       const cache = yield* Cache.make({
         capacity: Number.MAX_SAFE_INTEGER,
         timeToLive: Number.POSITIVE_INFINITY,
-        lookup: get,
+        lookup: (key: string | undefined) => get(key),
       });
 
       return {

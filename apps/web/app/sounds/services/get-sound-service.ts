@@ -1,21 +1,21 @@
 import { Context, Data, Effect, Layer, Option } from 'effect';
-import type { SelectSound } from '#app/sound/sound-models';
-import { SoundRepository } from '#app/sound/sound-repository';
-import { Sound, SoundId } from '#app/sound/sound-schemas';
-import { BucketObjectKey } from '#providers/bucket/bucket-schemas';
-import { Bucket } from '#providers/bucket/bucket-service';
+import type { SelectSound } from '#app/sounds/entities/sound-entity';
+import { SoundRepository } from '#app/sounds/repositories/sound-repository';
+import { Sound, SoundId } from '#app/sounds/schemas/sound-schemas';
+import { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
+import { Bucket } from '#providers/bucket/services/bucket-service';
 
 class SoundNotFoundError extends Data.TaggedError('SoundNotFoundError') {}
 
-export class SoundService extends Context.Tag('SoundService')<
-  SoundService,
+export class GetSoundService extends Context.Tag('GetSoundService')<
+  GetSoundService,
   {
-    readonly list: () => Effect.Effect<Sound[]>;
-    readonly findById: (id: string) => Effect.Effect<Sound, SoundNotFoundError>;
+    readonly getAll: () => Effect.Effect<Sound[]>;
+    readonly get: (id: string) => Effect.Effect<Sound, SoundNotFoundError>;
   }
 >() {
   static readonly Live = Layer.effect(
-    SoundService,
+    GetSoundService,
     Effect.gen(function* () {
       const repository = yield* SoundRepository;
       const bucket = yield* Bucket;
@@ -36,9 +36,9 @@ export class SoundService extends Context.Tag('SoundService')<
       };
 
       return {
-        list: () => {
+        getAll: () => {
           return Effect.gen(function* () {
-            const sounds = yield* repository.list();
+            const sounds = yield* repository.getAll();
 
             return yield* Effect.forEach(sounds, (sound) => reconciliate(sound), {
               concurrency: 'unbounded',
@@ -46,9 +46,9 @@ export class SoundService extends Context.Tag('SoundService')<
           });
         },
 
-        findById: (id) => {
+        get: (id) => {
           return Effect.gen(function* () {
-            const sound = yield* repository.findById(id);
+            const sound = yield* repository.get(id);
 
             return yield* Option.match(Option.fromNullable(sound), {
               onSome: (sound) => reconciliate(sound),

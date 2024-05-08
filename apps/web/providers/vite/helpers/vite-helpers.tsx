@@ -1,7 +1,7 @@
 import { Effect, pipe } from 'effect';
 import type { FC } from 'hono/jsx';
 import { useRequestContext } from 'hono/jsx-renderer';
-import { Vite } from '#providers/vite/vite-service';
+import { Vite } from '#providers/vite/services/vite-service';
 
 export const useViteAssetPath = (path: string | undefined): Promise<string | undefined> => {
   const context = useRequestContext();

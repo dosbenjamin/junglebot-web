@@ -1,15 +1,15 @@
 import { Effect, pipe } from 'effect';
 import type { FC } from 'hono/jsx';
 import { useRequestContext } from 'hono/jsx-renderer';
-import { SoundRepository } from '#app/sound/sound-repository';
-import { SoundService } from '#app/sound/sound-service';
+import { SoundRepository } from '#app/sounds/repositories/sound-repository';
+import { GetSoundService } from '#app/sounds/services/get-sound-service';
 
 export const Home: FC = async () => {
   const context = useRequestContext();
 
   const getSounds = pipe(
-    Effect.flatMap(SoundService, (service) => service.list()),
-    Effect.provide(SoundService.Live),
+    Effect.flatMap(GetSoundService, (service) => service.getAll()),
+    Effect.provide(GetSoundService.Live),
     Effect.provide(SoundRepository.live(context.var.drizzle)),
     Effect.provide(context.var.BucketLive),
   );

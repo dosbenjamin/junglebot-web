@@ -6,10 +6,10 @@ import * as home from '#app/home/handlers/home-handlers';
 import * as ping from '#app/ping/handlers/ping-handlers';
 import { createRouteGroup } from '#helpers/hono-helpers';
 import { bucketConfig } from '#providers/bucket/bucket-config';
-import { serveBucket } from '#providers/bucket/bucket-handlers';
-import { bucket } from '#providers/bucket/bucket-middlewares';
-import { drizzle } from '#providers/drizzle/drizzle-middlewares';
-import { vite } from '#providers/vite/vite-middlewares';
+import { serveBucket } from '#providers/bucket/handlers/bucket-handlers';
+import { bucket } from '#providers/bucket/middlewares/bucket-middlewares';
+import { drizzle } from '#providers/drizzle/middlewares/drizzle-middlewares';
+import { vite } from '#providers/vite/middlewares/vite-middlewares';
 import { Base } from '#views/layouts/base-layout';
 
 const app = new Hono()

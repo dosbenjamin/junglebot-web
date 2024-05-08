@@ -1,8 +1,8 @@
 import { Layer, pipe } from 'effect';
 import { createMiddleware } from '#helpers/hono-helpers';
-import { ViteAssetPathResolver } from '#providers/vite/vite-asset-path-resolver';
-import { ViteManifestRepository } from '#providers/vite/vite-manifest-repository';
-import { Vite } from '#providers/vite/vite-service';
+import { ViteManifestRepository } from '#providers/vite/repositories/vite-manifest-repository';
+import { ViteAssetPathResolver } from '#providers/vite/services/vite-asset-path-resolver';
+import { Vite } from '#providers/vite/services/vite-service';
 
 export const vite = createMiddleware(async (context, next) => {
   if (import.meta.env.DEV) {

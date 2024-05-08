@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
-export const soundsTable = sqliteTable('sounds', {
+export const Sound = sqliteTable('sounds', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID())
@@ -15,5 +15,5 @@ export const soundsTable = sqliteTable('sounds', {
     .notNull(),
 });
 
-export type SelectSound = typeof soundsTable.$inferSelect;
-export type InsertSound = typeof soundsTable.$inferInsert;
+export type SelectSound = typeof Sound.$inferSelect;
+export type InsertSound = typeof Sound.$inferInsert;

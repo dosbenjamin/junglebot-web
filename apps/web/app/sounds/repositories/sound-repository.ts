@@ -1,26 +1,26 @@
 import { eq } from 'drizzle-orm';
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
 import { Context, Effect, Layer } from 'effect';
-import { type SelectSound, soundsTable } from '#app/sound/sound-models';
-import type { DrizzleSchema } from '#providers/drizzle/drizzle-schema';
+import { type SelectSound, Sound } from '#app/sounds/entities/sound-entity';
+import type { DrizzleSchema } from '#providers/drizzle/drizzle-config';
 
 export class SoundRepository extends Context.Tag('SoundRepository')<
   SoundRepository,
   {
-    readonly list: () => Effect.Effect<SelectSound[]>;
-    readonly findById: (id: string) => Effect.Effect<SelectSound | undefined>;
+    readonly getAll: () => Effect.Effect<SelectSound[]>;
+    readonly get: (id: string) => Effect.Effect<SelectSound | undefined>;
   }
 >() {
   static live(db: DrizzleD1Database<DrizzleSchema>): Layer.Layer<SoundRepository> {
     return Layer.succeed(SoundRepository, {
-      list: () => {
+      getAll: () => {
         const query = db.query.sounds.findMany();
 
         return Effect.promise(() => query.execute());
       },
 
-      findById: (id) => {
-        const query = db.query.sounds.findFirst({ where: eq(soundsTable.id, id) });
+      get: (id) => {
+        const query = db.query.sounds.findFirst({ where: eq(Sound.id, id) });
 
         return Effect.promise(() => query.execute());
       },

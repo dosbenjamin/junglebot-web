@@ -2,8 +2,8 @@ import { Schema } from '@effect/schema';
 import { Effect, pipe } from 'effect';
 import { validator } from 'hono/validator';
 import { createHandlers } from '#helpers/hono-helpers';
-import { BucketObjectKey } from '#providers/bucket/bucket-schemas';
-import { Bucket } from '#providers/bucket/bucket-service';
+import { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
+import { Bucket } from '#providers/bucket/services/bucket-service';
 
 const decodeParam = Schema.decodeUnknown(
   Schema.Struct({

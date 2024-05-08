@@ -1,8 +1,8 @@
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
 import type { Layer } from 'effect';
-import type { Bucket } from '#providers/bucket/bucket-service';
-import type { DrizzleSchema, schema } from '#providers/drizzle/drizzle-schema';
-import type { Vite } from '#providers/vite/vite-service';
+import type { Bucket } from '#providers/bucket/services/bucket-service';
+import type { DrizzleSchema } from '#providers/drizzle/config/drizzle-config';
+import type { Vite } from '#providers/vite/services/vite-service';
 
 declare module 'hono' {
   interface Env {

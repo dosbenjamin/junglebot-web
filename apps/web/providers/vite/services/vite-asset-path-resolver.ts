@@ -1,7 +1,7 @@
 import { Schema } from '@effect/schema';
 import { Context, Effect, Layer, Option, pipe } from 'effect';
-import { ViteAssetPathNotFoundError } from '#providers/vite/vite-errors';
-import { ViteManifestRepository } from '#providers/vite/vite-manifest-repository';
+import { ViteAssetPathNotFoundError } from '#providers/vite/errors/vite-errors';
+import { ViteManifestRepository } from '#providers/vite/repositories/vite-manifest-repository';
 
 const ViteManifestChunk = Schema.Struct({
   src: Schema.String,
