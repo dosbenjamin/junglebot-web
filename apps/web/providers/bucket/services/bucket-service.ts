@@ -1,14 +1,14 @@
 import { Schema } from '@effect/schema';
 import { Context, Data, Effect, Layer, Option } from 'effect';
 import { bucketConfig } from '#providers/bucket/bucket-config';
+import { BucketExternalError } from '#providers/bucket/errors/bucket-errors';
 import { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
 
-class BucketExternalError extends Data.TaggedError('BucketExternalError') {}
 class BucketObjectNotFoundError extends Data.TaggedError('BucketObjectNotFoundError') {}
 
 class BucketObject extends Schema.Class<BucketObject>('BucketObject')({
   key: BucketObjectKey,
-  body: Schema.instanceOf(ReadableStream),
+  stream: Schema.instanceOf(ReadableStream),
 }) {}
 
 export class Bucket extends Context.Tag('Bucket')<
@@ -22,9 +22,9 @@ export class Bucket extends Context.Tag('Bucket')<
     readonly delete: (key: BucketObjectKey) => Effect.Effect<void, BucketExternalError>;
   }
 >() {
-  static live(bucket: R2Bucket): Layer.Layer<Bucket> {
+  static live(bucket: R2Bucket, currentUrl: string): Layer.Layer<Bucket> {
     return Layer.succeed(Bucket, {
-      put(value: ReadableStream) {
+      put(value) {
         const key = BucketObjectKey(crypto.randomUUID());
 
         return Effect.gen(function* () {
@@ -33,11 +33,11 @@ export class Bucket extends Context.Tag('Bucket')<
             catch: () => new BucketExternalError(),
           });
 
-          return new BucketObject({ key, body: value });
+          return new BucketObject({ key, stream: value });
         });
       },
 
-      get(key: BucketObjectKey) {
+      get(key) {
         return Effect.gen(function* () {
           const object = yield* Effect.tryPromise({
             try: () => bucket.get(key),
@@ -49,17 +49,17 @@ export class Bucket extends Context.Tag('Bucket')<
             onNone: () => new BucketObjectNotFoundError(),
           });
 
-          return new BucketObject({ key, body });
+          return new BucketObject({ key, stream: body });
         });
       },
 
-      getUrl(key: BucketObjectKey) {
-        const url = new URL(import.meta.url, bucketConfig.rewrite(key));
+      getUrl(key) {
+        const url = new URL(bucketConfig.rewrite(key), currentUrl);
 
         return Effect.succeed(url.toString());
       },
 
-      delete(key: BucketObjectKey) {
+      delete(key) {
         return Effect.tryPromise({
           try: () => bucket.delete(key),
           catch: () => new BucketExternalError(),

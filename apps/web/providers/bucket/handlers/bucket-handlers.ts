@@ -25,7 +25,7 @@ export const serveBucket = createHandlers(
 
     const getResponse = pipe(
       Effect.flatMap(Bucket, (bucket) => bucket.get(key)),
-      Effect.map((object) => context.newResponse(object.body)),
+      Effect.map((object) => context.newResponse(object.stream)),
       Effect.catchTags({
         BucketObjectNotFoundError: () => Effect.succeed(context.notFound()),
         BucketExternalError: () => Effect.succeed(context.newResponse(null, 502)),

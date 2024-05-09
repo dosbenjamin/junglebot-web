@@ -8,7 +8,7 @@ export const Home: FC = async () => {
   const context = useRequestContext();
 
   const getSounds = pipe(
-    Effect.flatMap(GetSoundService, (service) => service.getAll()),
+    Effect.flatMap(GetSoundService, (sound) => sound.getAll()),
     Effect.provide(GetSoundService.Live),
     Effect.provide(SoundRepository.live(context.var.drizzle)),
     Effect.provide(context.var.BucketLive),

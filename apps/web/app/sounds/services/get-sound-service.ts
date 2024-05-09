@@ -1,57 +1,38 @@
-import { Context, Data, Effect, Layer, Option } from 'effect';
-import type { SelectSound } from '#app/sounds/entities/sound-entity';
+import { Context, Effect, Layer, Option } from 'effect';
+import { SoundNotFoundError } from '#app/sounds/errors/sound-not-found-error';
 import { SoundRepository } from '#app/sounds/repositories/sound-repository';
-import { Sound, SoundId } from '#app/sounds/schemas/sound-schemas';
-import { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
-import { Bucket } from '#providers/bucket/services/bucket-service';
-
-class SoundNotFoundError extends Data.TaggedError('SoundNotFoundError') {}
+import { Sound } from '#app/sounds/schemas/sound-schema';
+import type { Bucket } from '#providers/bucket/services/bucket-service';
 
 export class GetSoundService extends Context.Tag('GetSoundService')<
   GetSoundService,
   {
-    readonly getAll: () => Effect.Effect<Sound[]>;
-    readonly get: (id: string) => Effect.Effect<Sound, SoundNotFoundError>;
+    readonly getAll: () => Effect.Effect<Sound[], never, Bucket>;
+    readonly getById: (id: string) => Effect.Effect<Sound, SoundNotFoundError, Bucket>;
   }
 >() {
   static readonly Live = Layer.effect(
     GetSoundService,
     Effect.gen(function* () {
       const repository = yield* SoundRepository;
-      const bucket = yield* Bucket;
-
-      const reconciliate = (sound: SelectSound): Effect.Effect<Sound> => {
-        const id = SoundId(sound.id);
-        const key = BucketObjectKey(sound.fileId);
-
-        return Effect.map(bucket.getUrl(key), (fileUrl) => {
-          return new Sound({
-            id,
-            fileUrl,
-            name: sound.name,
-            author: sound.author,
-            createAt: sound.createdAt,
-          });
-        });
-      };
 
       return {
         getAll: () => {
-          return Effect.gen(function* () {
+          return Effect.gen(function* (_) {
             const sounds = yield* repository.getAll();
 
-            return yield* Effect.forEach(sounds, (sound) => reconciliate(sound), {
+            return yield* Effect.forEach(sounds, (sound) => Sound.fromRecord(sound), {
               concurrency: 'unbounded',
             });
           });
         },
 
-        get: (id) => {
-          return Effect.gen(function* () {
-            const sound = yield* repository.get(id);
+        getById: (id) => {
+          return Effect.gen(function* (_) {
+            const sound = yield* repository.getById(id);
 
             return yield* Option.match(Option.fromNullable(sound), {
-              onSome: (sound) => reconciliate(sound),
+              onSome: (sound) => Sound.fromRecord(sound),
               onNone: () => new SoundNotFoundError(),
             });
           });
