@@ -11,7 +11,7 @@ export class SoundRepository extends Context.Tag('SoundRepository')<
     readonly getAll: () => Effect.Effect<SelectSound[]>;
     readonly getById: (id: SoundId) => Effect.Effect<SelectSound | undefined>;
     readonly getByName: (name: string) => Effect.Effect<SelectSound | undefined>;
-    readonly create: (values: InsertSound) => Effect.Effect<SelectSound | undefined>;
+    readonly create: (payload: InsertSound) => Effect.Effect<SelectSound | undefined>;
   }
 >() {
   static live(db: DrizzleD1Database<DrizzleSchema>): Layer.Layer<SoundRepository> {
@@ -34,8 +34,8 @@ export class SoundRepository extends Context.Tag('SoundRepository')<
         return Effect.promise(() => query.execute());
       },
 
-      create: (values) => {
-        const query = db.insert(Sound).values(values).returning();
+      create: (payload) => {
+        const query = db.insert(Sound).values(payload).returning();
 
         return Effect.promise(() => query.execute().then((sounds) => sounds[0]));
       },

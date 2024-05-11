@@ -1,9 +1,9 @@
 import { Context, Data, Effect, Layer, Option } from 'effect';
 import { SoundNotFoundError } from '#app/sounds/errors/sound-not-found-error';
 import { SoundRepository } from '#app/sounds/repositories/sound-repository';
-import type { NewSound } from '#app/sounds/schemas/new-sound-schema';
+import type { CreateSoundPayload } from '#app/sounds/schemas/create-sound-payload';
 import { Sound } from '#app/sounds/schemas/sound-schema';
-import type { BucketExternalError } from '#providers/bucket/errors/bucket-errors';
+import type { BucketExternalError } from '#providers/bucket/errors/bucket-external-error';
 import { Bucket } from '#providers/bucket/services/bucket-service';
 
 class SoundNameAlreadyUsedError extends Data.TaggedError('SoundNameAlreadyUsedError') {}
@@ -12,7 +12,7 @@ export class CreateSoundService extends Context.Tag('CreateSoundService')<
   CreateSoundService,
   {
     readonly create: (
-      values: NewSound,
+      payload: CreateSoundPayload,
     ) => Effect.Effect<
       Sound,
       SoundNotFoundError | SoundNameAlreadyUsedError | BucketExternalError,
@@ -27,17 +27,17 @@ export class CreateSoundService extends Context.Tag('CreateSoundService')<
       const bucket = yield* Bucket;
 
       return {
-        create: (values) => {
-          return Effect.gen(function* () {
-            if (yield* repository.getByName(values.name)) {
+        create: (payload) => {
+          return Effect.gen(function* (_) {
+            if (yield* repository.getByName(payload.name)) {
               return yield* new SoundNameAlreadyUsedError();
             }
 
-            const { key } = yield* bucket.put(values.stream);
+            const { key } = yield* bucket.put(payload.file);
 
             const sound = yield* repository.create({
-              author: values.author,
-              name: values.name,
+              author: payload.author,
+              name: payload.name,
               fileId: key,
             });
 

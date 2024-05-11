@@ -5,16 +5,16 @@ import * as about from '#app/about/handlers/about-handlers';
 import * as home from '#app/home/handlers/home-handlers';
 import * as ping from '#app/ping/handlers/ping-handlers';
 import { createRouteGroup } from '#helpers/hono-helpers';
-import { bucketConfig } from '#providers/bucket/bucket-config';
-import { serveBucket } from '#providers/bucket/handlers/bucket-handlers';
-import { bucket } from '#providers/bucket/middlewares/bucket-middlewares';
+import { serveBucket } from '#providers/bucket/handlers/serve-bucket-handlers';
+import { bucket } from '#providers/bucket/middlewares/bucket-middleware';
 import { drizzle } from '#providers/drizzle/middlewares/drizzle-middlewares';
+import { flash } from '#providers/flash/middlewares/flash-middleware';
 import { vite } from '#providers/vite/middlewares/vite-middlewares';
 import { Base } from '#views/layouts/base-layout';
 
 const app = new Hono()
-  .use(drizzle, bucket)
-  .get(bucketConfig.path, ...serveBucket)
+  .use(flash, drizzle, bucket('/bucket'))
+  .get('/bucket/:key', ...serveBucket)
   .route(
     '/',
     createRouteGroup((web) => {
@@ -23,7 +23,8 @@ const app = new Hono()
           vite,
           jsxRenderer((props) => <Base {...props} />),
         )
-        .get('/', ...home.render)
+        .get('/', ...home.get)
+        .post('/', ...home.post)
         .get('/about', ...about.render)
         .get('/static/*', serveStatic());
     }),

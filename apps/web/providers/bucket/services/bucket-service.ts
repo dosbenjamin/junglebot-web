@@ -1,20 +1,19 @@
 import { Schema } from '@effect/schema';
 import { Context, Data, Effect, Layer, Option } from 'effect';
-import { bucketConfig } from '#providers/bucket/bucket-config';
-import { BucketExternalError } from '#providers/bucket/errors/bucket-errors';
-import { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
+import { BucketExternalError } from '#providers/bucket/errors/bucket-external-error';
+import { BucketObjectKey } from '#providers/bucket/schemas/bucket-object-key-schema';
 
 class BucketObjectNotFoundError extends Data.TaggedError('BucketObjectNotFoundError') {}
 
 class BucketObject extends Schema.Class<BucketObject>('BucketObject')({
   key: BucketObjectKey,
-  stream: Schema.instanceOf(ReadableStream),
+  file: Schema.instanceOf(File),
 }) {}
 
 export class Bucket extends Context.Tag('Bucket')<
   Bucket,
   {
-    readonly put: (value: ReadableStream) => Effect.Effect<BucketObject, BucketExternalError>;
+    readonly put: (value: File) => Effect.Effect<BucketObject, BucketExternalError>;
     readonly get: (
       key: BucketObjectKey,
     ) => Effect.Effect<BucketObject, BucketExternalError | BucketObjectNotFoundError>;
@@ -22,7 +21,7 @@ export class Bucket extends Context.Tag('Bucket')<
     readonly delete: (key: BucketObjectKey) => Effect.Effect<void, BucketExternalError>;
   }
 >() {
-  static live(bucket: R2Bucket, currentUrl: string): Layer.Layer<Bucket> {
+  static live(bucket: R2Bucket, currentUrl: string, objectPath: string): Layer.Layer<Bucket> {
     return Layer.succeed(Bucket, {
       put(value) {
         const key = BucketObjectKey(crypto.randomUUID());
@@ -33,28 +32,33 @@ export class Bucket extends Context.Tag('Bucket')<
             catch: () => new BucketExternalError(),
           });
 
-          return new BucketObject({ key, stream: value });
+          return new BucketObject({ key, file: value });
         });
       },
 
       get(key) {
-        return Effect.gen(function* () {
+        return Effect.gen(function* (_) {
           const object = yield* Effect.tryPromise({
             try: () => bucket.get(key),
             catch: () => new BucketExternalError(),
           });
 
-          const { body } = yield* Option.match(Option.fromNullable(object), {
+          const { blob } = yield* Option.match(Option.fromNullable(object), {
             onSome: (object) => Effect.succeed(object),
             onNone: () => new BucketObjectNotFoundError(),
           });
 
-          return new BucketObject({ key, stream: body });
+          const file = yield* _(
+            Effect.promise(() => blob()),
+            Effect.map((blob) => new File([blob], key)),
+          );
+
+          return new BucketObject({ key, file });
         });
       },
 
       getUrl(key) {
-        const url = new URL(bucketConfig.rewrite(key), currentUrl);
+        const url = new URL(`${objectPath}/${key}`, currentUrl);
 
         return Effect.succeed(url.toString());
       },

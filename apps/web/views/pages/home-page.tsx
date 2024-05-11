@@ -18,9 +18,13 @@ export const Home: FC = async () => {
 
   return (
     <div>
-      {sounds.map((sound) => (
-        <div key={sound.id}>{sound.fileUrl}</div>
-      ))}
+      <div>
+        {sounds.map((sound) => (
+          <div key={sound.id}>
+            {sound.name} ajouté par {sound.fileUrl}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

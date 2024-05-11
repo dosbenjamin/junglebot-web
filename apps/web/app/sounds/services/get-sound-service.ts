@@ -19,7 +19,7 @@ export class GetSoundService extends Context.Tag('GetSoundService')<
 
       return {
         getAll: () => {
-          return Effect.gen(function* (_) {
+          return Effect.gen(function* () {
             const sounds = yield* repository.getAll();
 
             return yield* Effect.forEach(sounds, (sound) => Sound.fromRecord(sound), {
@@ -29,7 +29,7 @@ export class GetSoundService extends Context.Tag('GetSoundService')<
         },
 
         getById: (id) => {
-          return Effect.gen(function* (_) {
+          return Effect.gen(function* () {
             const sound = yield* repository.getById(SoundId(id));
 
             return yield* Option.match(Option.fromNullable(sound), {

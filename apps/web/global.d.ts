@@ -2,6 +2,7 @@ import type { DrizzleD1Database } from 'drizzle-orm/d1';
 import type { Layer } from 'effect';
 import type { Bucket } from '#providers/bucket/services/bucket-service';
 import type { DrizzleSchema } from '#providers/drizzle/drizzle-config';
+import type { Flash } from '#providers/flash/services/flash-service';
 import type { Vite } from '#providers/vite/services/vite-service';
 
 declare module 'hono' {
@@ -14,8 +15,9 @@ declare module 'hono' {
   }
 
   interface ContextVariableMap {
-    drizzle: DrizzleD1Database<DrizzleSchema>;
     BucketLive: Layer.Layer<Bucket>;
+    drizzle: DrizzleD1Database<DrizzleSchema>;
+    flash: Flash;
     ViteLive: Layer.Layer<Vite>;
   }
 }

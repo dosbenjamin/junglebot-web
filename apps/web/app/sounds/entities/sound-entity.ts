@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 import type { SoundId } from '#app/sounds/schemas/sound-id-schema';
-import type { BucketObjectKey } from '#providers/bucket/schemas/bucket-schemas';
+import type { BucketObjectKey } from '#providers/bucket/schemas/bucket-object-key-schema';
 
 export const Sound = sqliteTable('sounds', {
   id: text('id')
