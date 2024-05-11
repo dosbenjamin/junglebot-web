@@ -12,7 +12,7 @@ export class CreateSoundService extends Context.Tag('CreateSoundService')<
   CreateSoundService,
   {
     readonly create: (
-      newSound: NewSound,
+      values: NewSound,
     ) => Effect.Effect<
       Sound,
       SoundNotFoundError | SoundNameAlreadyUsedError | BucketExternalError,
@@ -27,19 +27,17 @@ export class CreateSoundService extends Context.Tag('CreateSoundService')<
       const bucket = yield* Bucket;
 
       return {
-        create: (newSound) => {
+        create: (values) => {
           return Effect.gen(function* () {
-            const existingSound = yield* repository.getByName(newSound.name);
-
-            if (existingSound) {
+            if (yield* repository.getByName(values.name)) {
               return yield* new SoundNameAlreadyUsedError();
             }
 
-            const { key } = yield* bucket.put(newSound.stream);
+            const { key } = yield* bucket.put(values.stream);
 
             const sound = yield* repository.create({
-              author: newSound.author,
-              name: newSound.name,
+              author: values.author,
+              name: values.name,
               fileId: key,
             });
 
